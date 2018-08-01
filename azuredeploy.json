@@ -847,6 +847,26 @@
             }
         },
         {
+            "condition": "[parameters('CudaWafDeploySwitch')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "WAFTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "moodleCommon": {
+                        "value": "[variables('moodleCommon')]"
+                    },
+                    "subnetIdWaf": {
+                        "value": "[reference('networkTemplate').outputs.subnetIdWaf.value]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[concat(variables('moodleCommon').baseTemplateUrl, 'bwafpayg_network.json', parameters('_artifactsLocationSasToken'))]"
+                }
+            }
+        },
+        {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "name": "networkTemplate",
@@ -940,26 +960,6 @@
                 },
                 "templateLink": {
                     "uri": "[concat(variables('moodleCommon').baseTemplateUrl, 'redis.json', parameters('_artifactsLocationSasToken'))]"
-                }
-            }
-        },
-        {
-            "condition": "[parameters('CudaWafDeploySwitch')]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2017-05-10",
-            "name": "WAFTemplate",
-            "properties": {
-                "mode": "Incremental",
-                "parameters": {
-                    "moodleCommon": {
-                        "value": "[variables('moodleCommon')]"
-                    },
-                    "subnetIdRedis": {
-                        "value": "[reference('networkTemplate').outputs.subnetIdWaf.value]"
-                    }
-                },
-                "templateLink": {
-                    "uri": "[concat(variables('moodleCommon').baseTemplateUrl, 'bwafpayg_network.json', parameters('_artifactsLocationSasToken'))]"
                 }
             }
         },
