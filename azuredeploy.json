@@ -1205,7 +1205,7 @@
             }
         },
         {
-            "condition": "(parameters('moodleCommon').CudaWafDeploySwitch",
+            "condition": "[parameters('CudaWafDeploySwitch')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "dependsOn": [
