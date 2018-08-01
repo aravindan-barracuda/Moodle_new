@@ -948,9 +948,6 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "name": "WAFTemplate",
-            "dependsOn": [
-                "Microsoft.Resources/deployments/networkTemplate"
-            ],
             "properties": {
                 "mode": "Incremental",
                 "parameters": {
