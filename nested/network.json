@@ -302,7 +302,6 @@
             }
         },
         {   
-            "condition": "(parameters('moodleCommon').CudaWafDeploySwitch",
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2017-10-01",
             "name": "[concat(parameters('moodleCommon').waflbSku,'NSG')]",
