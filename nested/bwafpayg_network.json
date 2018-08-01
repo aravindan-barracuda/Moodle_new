@@ -142,21 +142,13 @@
       "wafnamingInfix": "[toLower(substring(concat(parameters('moodleCommon').wafvmssName, uniqueString(resourceGroup().location)), 0, 9))]",
       "wafnatPoolName": "[concat(variables('wafnamingInfix'), 'natpool')]",
       "wafnatPoolNameHttps": "[concat(variables('wafnamingInfix'), 'natpoolHttps')]",
-      "subnetIdWaf":      "[if(equals(parameters('moodleCommon').customVnetId, ''), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), parameters('moodleCommon').subnetWaf), variables('customVnetSubnetIdWaf'))]",
       "wafextLbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('moodleCommon').waflbName)]",
       "wafextProbeID": "[concat(variables('wafextLbID'),'/probes/',parameters('moodleCommon').wafextProbe)]",
       "waflbPipID": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('moodleCommon').waflbPipName)]",
-      "customVnetSubnetIdWaf":        "[concat(parameters('moodleCommon').customVnetId, '/subnets/', parameters('moodleCommon').subnetWaf)]",
       "customVnetIdArr":              "[split(parameters('moodleCommon').customVnetId, '/')]",
-        "vnetSub":                      "[if(equals(parameters('moodleCommon').customVnetId, ''), subscription().subscriptionId, variables('customVnetIdArr')[2])]",
-        "vnetRg":                       "[if(equals(parameters('moodleCommon').customVnetId, ''), resourceGroup().name, variables('customVnetIdArr')[4])]",
-        "vnetName":                     "[if(equals(parameters('moodleCommon').customVnetId, ''), parameters('moodleCommon').vnetName, variables('customVnetIdArr')[8])]",
+      "vnetSub":                      "[if(equals(parameters('moodleCommon').customVnetId, ''), subscription().subscriptionId, variables('customVnetIdArr')[2])]",
+      "vnetRg":                       "[if(equals(parameters('moodleCommon').customVnetId, ''), resourceGroup().name, variables('customVnetIdArr')[4])]",
+      "vnetName":                     "[if(equals(parameters('moodleCommon').customVnetId, ''), parameters('moodleCommon').vnetName, variables('customVnetIdArr')[8])]",
       "documentation01": "This sub-template creates a virtual network with a number of subnets and then creates the moodle load-balancer (or an Azure Application Gateway) with public IP/dns"
-  },
-  "outputs": {
-      "subnetIdWaf": {
-          "value": "[variables('subnetIdWaf')]",
-          "type": "string"
-      }
   }
 }
