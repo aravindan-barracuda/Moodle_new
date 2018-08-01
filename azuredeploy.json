@@ -858,7 +858,7 @@
                     }
                 },
                 "templateLink": {
-                    "uri": "[concat(variables('moodleCommon').baseTemplateUrl,'network_with_waf.json',parameters('_artifactsLocationSasToken'))]"
+                    "uri": "[concat(variables('moodleCommon').baseTemplateUrl,'network.json',parameters('_artifactsLocationSasToken'))]"
                 }
             }
         },
