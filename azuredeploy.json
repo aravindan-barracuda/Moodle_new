@@ -962,7 +962,7 @@
                     }
                 },
                 "templateLink": {
-                    "uri": "[concat(variables('moodleCommon').baseTemplateUrl, 'bwafpayg_new.json', parameters('_artifactsLocationSasToken'))]"
+                    "uri": "[concat(variables('moodleCommon').baseTemplateUrl, 'bwafpayg_network.json', parameters('_artifactsLocationSasToken'))]"
                 }
             }
         },

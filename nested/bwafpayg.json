@@ -8,12 +8,6 @@
             },
         "type": "object"
         },
-        "vnetName": {
-          "metadata": {
-              "description": "The name of the vnet where subnets should be created"
-          },
-          "type": "string"
-      },
         "subnetIdWaf": {
             "metadata": {
                 "description": "Azure resource ID of the subnet where the WAFs should be deployed"
@@ -28,22 +22,6 @@
                 "id": "[variables('wafextBeID')]"
             }
         ],
-        "wafextBeID": "[concat(variables('wafextLbID'),'/backendAddressPools/',parameters('moodleCommon').wafextBeName)]",
-        "wafextFeID": "[concat(variables('wafextLbID'),'/frontendIPConfigurations/',parameters('moodleCommon').wafextFeName)]",
-        "wafnamingInfix": "[toLower(substring(concat(parameters('moodleCommon').wafvmssName, uniqueString(resourceGroup().location)), 0, 9))]",
-        "wafnatPoolName": "[concat(variables('wafnamingInfix'), 'natpool')]",
-        "wafnatPoolNameHttps": "[concat(variables('wafnamingInfix'), 'natpoolHttps')]",
-        "subnetIdWaf":      "[if(equals(parameters('moodleCommon').customVnetId, ''), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), parameters('moodleCommon').subnetWaf), variables('customVnetSubnetIdWaf'))]",
-        "wafextLbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('moodleCommon').waflbName)]",
-        "wafextProbeID": "[concat(variables('wafextLbID'),'/probes/',parameters('moodleCommon').wafextProbe)]",
-        "waflbPipID": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('moodleCommon').waflbPipName)]",
-        "customVnetSubnetIdWaf":        "[concat(parameters('moodleCommon').customVnetId, '/subnets/', parameters('moodleCommon').subnetWaf)]",
-
-        "documentation01": "This sub-template creates a virtual network with a number of subnets and then creates the moodle load-balancer (or an Azure Application Gateway) with public IP/dns",
-        "customVnetIdArr":              "[split(parameters('moodleCommon').customVnetId, '/')]",
-        "vnetSub":                      "[if(equals(parameters('moodleCommon').customVnetId, ''), subscription().subscriptionId, variables('customVnetIdArr')[2])]",
-        "vnetRg":                       "[if(equals(parameters('moodleCommon').customVnetId, ''), resourceGroup().name, variables('customVnetIdArr')[4])]",
-        "vnetName":                     "[if(equals(parameters('moodleCommon').customVnetId, ''), parameters('moodleCommon').vnetName, variables('customVnetIdArr')[8])]",
         "wafnamingInfix": "[toLower(substring(concat(parameters('moodleCommon').wafvmssName, uniqueString(resourceGroup().location)), 0, 9))]",
         "wafnatPoolName": "[concat(variables('wafnamingInfix'), 'natpool')]",
         "wafnatPoolNameHttps": "[concat(variables('wafnamingInfix'), 'natpoolHttps')]",
@@ -82,186 +60,6 @@
     },
 
     "resources": [
-    {
-        "type": "Microsoft.Network/publicIPAddresses",
-        "sku": {
-            "name": "[parameters('moodleCommon').waflbSku]"
-        },
-        "apiVersion": "2017-10-01",
-        "location": "[resourceGroup().location]",
-        "name": "[parameters('moodleCommon').waflbPipName]",
-        "properties": {
-            "dnsSettings": {
-                "domainNameLabel": "[parameters('moodleCommon').waflbName]"
-            },
-            "publicIPAllocationMethod": "Static"
-        },
-        "tags": {
-            "displayName": "WAF's Load Balancer Public IP"
-        }
-    },
-    {
-        "type": "Microsoft.Network/networkSecurityGroups",
-        "apiVersion": "2017-10-01",
-        "name": "[concat(parameters('moodleCommon').waflbSku,'NSG')]",
-        "location": "[resourceGroup().location]",
-        "tags": {
-          "displayName": "NSG-WAF"
-        },
-        "properties": {
-          "securityRules": [
-            {
-              "name": "http-mgmt",
-              "properties": {
-                "description": "MGMT_-_HTTP",
-                "protocol": "Tcp",
-                "sourcePortRange": "*",
-                "destinationPortRange": "8000",
-                "sourceAddressPrefix": "Internet",
-                "destinationAddressPrefix": "*",
-                "access": "Allow",
-                "priority": 1010,
-                "direction": "Inbound"
-              }
-            },
-            {
-              "name": "https",
-              "properties": {
-                "description": "HTTPS",
-                "protocol": "Tcp",
-                "sourcePortRange": "*",
-                "destinationPortRange": "443",
-                "sourceAddressPrefix": "Internet",
-                "destinationAddressPrefix": "*",
-                "access": "Allow",
-                "priority": 1020,
-                "direction": "Inbound"
-              }
-            },
-            {
-              "name": "https-mgmt",
-              "properties": {
-                "description": "MGMT_-_HTTPS",
-                "protocol": "Tcp",
-                "sourcePortRange": "*",
-                "destinationPortRange": "8443",
-                "sourceAddressPrefix": "Internet",
-                "destinationAddressPrefix": "*",
-                "access": "Allow",
-                "priority": 1030,
-                "direction": "Inbound"
-              }
-            }
-          ]
-        }
-      },
-   
-    {
-        "type": "Microsoft.Network/loadBalancers",
-        "sku": {
-            "name": "[parameters('moodleCommon').waflbSku]"
-        },
-        "apiVersion": "2017-10-01",
-        "dependsOn": [
-            "[concat('Microsoft.Network/publicIPAddresses/',parameters('moodleCommon').waflbPipName)]"
-        ],
-        "location": "[resourceGroup().location]",
-        "name": "[parameters('moodleCommon').waflbName]",
-        "properties": {
-          "frontendIPConfigurations": [
-            {
-              "name": "[parameters('moodleCommon').wafextFeName ]",
-              "properties": {
-                "publicIPAddress": {
-                  "id": "[variables('waflbPipID')]"
-                }
-              }
-            }
-          ],
-          "backendAddressPools": [
-            {
-              "name": "[parameters('moodleCommon').wafextBeName ]"
-            }
-          ],
-          "loadBalancingRules": [
-            {
-                "name": "wafHttp",
-                "properties": {
-                    "backendAddressPool": {
-                        "id": "[variables('wafextBeID')]"
-                    },
-                    "backendPort": 80,
-                    "enableFloatingIP": false,
-                    "frontendIPConfiguration": {
-                        "id": "[variables('wafextFeID')]"
-                    },
-                    "frontendPort": 80,
-                    "idleTimeoutInMinutes": 5,
-                    "probe": {
-                        "id": "[variables('wafextProbeID')]"
-                    },
-                    "protocol": "Tcp"
-                }
-            },
-            {
-                "name": "wafHttps",
-                "properties": {
-                    "backendAddressPool": {
-                        "id": "[variables('wafextBeID')]"
-                    },
-                    "backendPort": 443,
-                    "enableFloatingIP": false,
-                    "frontendIPConfiguration": {
-                        "id": "[variables('wafextFeID')]"
-                    },
-                    "frontendPort": 443,
-                    "idleTimeoutInMinutes": 5,
-                    "probe": {
-                        "id": "[variables('wafextProbeID')]"
-                    },
-                    "protocol": "Tcp"
-                }
-            }
-        ],
-          "probes": [
-            {
-              "properties": {
-                "protocol": "Tcp",
-                "port": 80,
-                "intervalInSeconds": 5,
-                "numberOfProbes": 3
-              },
-              "name": "[parameters('moodleCommon').wafextProbe  ]"
-            }
-          ],
-          "inboundNatPools": [
-            {
-              "name": "[variables('wafnatPoolName')]",
-              "properties": {
-                "frontendIPConfiguration": {
-                  "id": "[variables('wafextFeID')]"
-                },
-                "protocol": "tcp",
-                "frontendPortRangeStart": "8000",
-                "frontendPortRangeEnd": "8100",
-                "backendPort": "8000"
-              }
-            },
-            {
-              "name": "[variables('wafnatPoolNameHttps')]",
-              "properties": {
-                "frontendIPConfiguration": {
-                  "id": "[variables('wafextFeID')]"
-                },
-                "protocol": "tcp",
-                "frontendPortRangeStart": "8443",
-                "frontendPortRangeEnd": "8543",
-                "backendPort": "8443"
-              }
-            }
-          ]
-        }
-      },
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2017-06-01",
@@ -480,11 +278,5 @@
           ]
         }
       }
-    ],
-    "outputs": {
-      "subnetIdWaf": {
-          "value": "[variables('subnetIdWaf')]",
-          "type": "string"
-      }
-  }
+    ]
   }
