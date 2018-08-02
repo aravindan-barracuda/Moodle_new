@@ -5,8 +5,7 @@ The instructions will enable you to deploy the Barracuda WAF in a scale set alon
 ## Fully configurable deployment with Barracuda WAF (Pay-As-You-Go License)
 
 This deployment will add the Barracuda Web Application Firewall to the moodle infrastructure.
-The following button will allow you to specify various configurations for your Moodle cluster
-deployment.
+The link below will redirect you to the Azure management console allowing you to specify various launch parameters for your Moodle cluster deployment.
 
 [![Deploy to Azure Fully Configurable](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Faravindan-barracuda%2FMoodle%2Fmaster%2Fazuredeploy-withbwafpayg.json)
 
@@ -16,12 +15,15 @@ deployment.
 
 First we need to ensure our environment variables are correctly configured.
 
-```
 Optional(Required if azure-credentials gem is used to auto-generate the SPN): 
+
+```
 AZUREUSERNAME=<azure user account>
 AZUREPASSWD=<azure account password>
-
+```
 Required:
+
+```
 WAFPASSWD=<waf password> #for example @Testing123456
 MOODLE_RG_LOCATION=<location/region> #for example "eastus"
 ```
@@ -63,7 +65,7 @@ The following snippet of bash commands will help to set up the environment varia
 ```
 2. Creating the Azure Service Principal credentials
 
-    Follow the instructions in the article https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal for creating the Azure Service Principal.
+    Follow the instructions in the article [![Azure SPN instructions](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal)] for creating the Azure Service Principal.
 
     Note: In the code snippet below a gem called ```azure-credentials``` to create a the SPN credentials that will be used in the WAF for azure configuration. 
 
@@ -91,6 +93,8 @@ The following snippet of bash commands will help to set up the environment varia
 ```
 3. Generating the Parameters JSON file.
 
+The following code snippet will update the parameters json file with the appropriate JSON keys and values to deploy the WAF scale set.
+
 ```
 {
     echo "Now creating the new parameters json file..." && sleep 2
@@ -104,7 +108,7 @@ The following snippet of bash commands will help to set up the environment varia
 ```
 4. Deploying the application with Barracuda WAF
 
-    Finally, use the following command to deploy the Barracuda WAF with the Moodle fully configurable setup.
+Finally, use the following command to deploy the Barracuda WAF with the Moodle fully configurable setup.
 
 ```
 az group deployment create --name $MOODLE_DEPLOYMENT_NAME \
