@@ -831,7 +831,14 @@
             "metadata": {
               "description": "Comma-delimited email addresses where the alerts are also sent"
             }
-          }
+          },
+          "wafclientVmSku": {
+            "defaultValue": "Standard_DS2_v2",
+            "metadata": {
+                "description": "VM size for the WAF VM node"
+            },
+            "type": "string"
+        }
     },
     "resources": [
         {
@@ -1225,6 +1232,31 @@
                     "uri": "[concat(variables('moodleCommon').baseTemplateUrl,'bwafpayg.json',parameters('_artifactsLocationSasToken'))]"
                 }
             }
+        },
+        {
+            "condition": "[parameters('CudaWafDeploySwitch')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/networkTemplate",
+                "Microsoft.Resources/deployments/WAFTemplate",
+                "Microsoft.Resources/deployments/CudaVMSSTemplate"
+            ],
+            "name": "wafconfigTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "moodleCommon": {
+                        "value": "[variables('moodleCommon')]"
+                    },
+                    "subnetIdTika": {
+                        "value": "[reference('networkTemplate').outputs.subnetIdWaf.value]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[concat(variables('moodleCommon').baseTemplateUrl, 'wafconfig.json', parameters('_artifactsLocationSasToken'))]"
+                }
+            }
         }
     ],
     "outputs": {
@@ -1503,7 +1535,12 @@
             "vnetName": "[concat('vnet-',variables('resourceprefix'))]",
             "vpnType": "[parameters('vpnType')]",
             "webServerSetupScriptFilename": "setup_webserver.sh",
-            "webServerType": "[parameters('webServerType')]"
+            "webServerType": "[parameters('webServerType')]",
+            "WafRestClientNicName":"[concat('tika-vm-nic-',variables('resourceprefix'))]",
+            "wafScriptFilename": "install_waf.sh",
+            "wafclientVmIP": "[if(equals(parameters('tikaService'), 'tika'), concat( variables('octets')[0], '.', variables('octets')[1], '.', string(add(int(variables('octets')[2]),7)), '.200'), 'none')]",
+            "wafclientVmName": "[concat('waf-client-vm-',variables('resourceprefix'))]",
+            "wafclientVmSku": "[parameters('wafclientVmSku')]"
         },
         "certUrlArray": [
             {

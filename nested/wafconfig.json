@@ -1,0 +1,129 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "moodleCommon": {
+            "metadata": {
+                "description": "Common Moodle values"
+            },
+            "type": "object"
+        },
+        "subnetIdWaf": {
+            "metadata": {
+                "description": "Azure resource ID of the subnet where this Tika VM is to be deployed"
+            },
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-10-01",
+            "location": "[parameters('moodleCommon').location]",
+            "name": "[parameters('moodleCommon').WafRestClientNicName]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipcfg-waf-client",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('moodleCommon').wafclientVmIP]",
+                            "subnet": {
+                                "id": "[parameters('subnetIdWaf')]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "tags": {
+                "displayName": "WAF REST CLIENT NIC"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2017-03-30",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('moodleCommon').WafRestClientNicName)]"
+            ],
+            "location": "[parameters('moodleCommon').location]",
+            "name": "[parameters('moodleCommon').wafclientVmName]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('moodleCommon').wafclientVmSku]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[variables('wafnicRef')]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "adminUsername": "[parameters('moodleCommon').sshUsername]",
+                    "computerName": "[parameters('moodleCommon').wafclientVmName]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[concat('/home/', parameters('moodleCommon').sshUsername, '/.ssh/authorized_keys')]",
+                                    "keyData": "[parameters('moodleCommon').sshPublicKey]"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "storageProfile": {
+                    "dataDisks": [],
+                    "imageReference": "[parameters('moodleCommon').osType]",
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('moodleCommon').osDiskStorageType]"
+                        },
+                        "name": "[parameters('moodleCommon').wafclientVmName]"
+                    }
+                }
+            },
+            "tags": {
+                "displayName": "WAF client Virtual Machine"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2017-03-30",
+            "location": "[parameters('moodleCommon').location]",
+            "name": "[concat(parameters('moodleCommon').wafclientVmName,'/','install_waf')]",
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.Extensions",
+                "settings": {
+                    "fileUris": [
+                        "[variables('wafscriptUri')]",
+                        "[parameters('moodleCommon').commonFunctionsScriptUri]"
+                    ]
+                },
+                "protectedSettings":{
+                    "commandToExecute": "[variables('wafcmdExec')]"
+                },
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0"
+            },
+            "tags": {
+                "displayName": "configure_waf"
+            }
+        }
+    ],
+    "variables": {
+        "documentation01": "This sub-template sets up the waf configuration as per the moodle deployment",
+        "documentation02": "It expects certain values in the 'common' datastructure.",
+        "documentation03": "    vnetName               - name of the virtual network",
+        "documentation06": "    WafRestClientNicName            - name of the WAF Client vm network interface",
+        "documentation11": "    WafclientVmName             - name of the tika vm",
+        "documentation12": "    WafclientVmIP               - IP of the tika vm",
+        "documentation16": "    wafclientconfig             - conditionally applies post-deployment script on the VM",
+        "wafnicRef": "[resourceId('Microsoft.Network/networkInterfaces', parameters('moodleCommon').WafRestClientNicName)]",
+        "wafcmdExec": "[concat('bash ', parameters('moodleCommon').wafScriptFilename, ' ', parameters('moodleCommon').wafclientVmIP)]",
+        "wafscriptUri": "[concat(parameters('moodleCommon').scriptLocation,parameters('moodleCommon').wafScriptFilename,parameters('moodleCommon').artifactsSasToken)]"
+    }
+}
