@@ -15,13 +15,13 @@ The link below will redirect you to the Azure management console allowing you to
 
 [![Deploy to Azure Fully Configurable](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Faravindan-barracuda%2FMoodle%2Fmaster%2Fazuredeploy-withbwafpayg.json)
 
-# CLI based deployment
+## CLI based deployment
 
-## Prerequisites
+### Prerequisites
 
 First we need to ensure our environment variables are correctly configured.
 
-Optional(Required if azure-credentials gem is used to auto-generate the SPN): 
+Optional (Required if the [azure-credentials](https://github.com/pendrica/azure-credentials) gem is used to auto-generate the SPN): 
 
 ```
 AZUREUSERNAME=<azure user account>
@@ -34,7 +34,7 @@ WAFPASSWD=<waf password> #for example @Testing123456
 MOODLE_RG_LOCATION=<location/region> #for example "eastus"
 ```
 
-## Deployment Steps
+### Deployment Steps
 
 The following snippet of bash commands will help to set up the environment variables to the point where you      can execute ```az group deployment create```
 
