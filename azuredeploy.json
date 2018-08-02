@@ -651,11 +651,11 @@
             "type": "string"
         },
         "wafpasswd": {
-            "defaultValue": "1234567aA@",
+            "defaultValue": "WAF-PASSWORD",
             "metadata": {
                 "description": "waf user name"
             },
-            "type": "string"
+            "type": "securestring"
         },
         "wafautoscaleVmSku": {
             "defaultValue": "Standard_DS2_v2",
