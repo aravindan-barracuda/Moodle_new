@@ -24,7 +24,26 @@
 
 set -ex
 sleep 300
+function get_setup_params_from_configs_json
+{
+    local configs_json_path=${1}    # E.g., /var/lib/cloud/instance/moodle_on_azure_configs.json
 
+    (dpkg -l jq &> /dev/null) || (apt -y update; apt -y install jq)
+
+    # Wait for the cloud-init write-files user data file to be generated (just in case)
+    local wait_time_sec=0
+    while [ ! -f "$configs_json_path" ]; do
+        sleep 15
+        let "wait_time_sec += 15"
+        if [ "$wait_time_sec" -ge "1800" ]; then
+            echo "Error: Cloud-init write-files didn't complete in 30 minutes!"
+            return 1
+        fi
+    done
+    export lbDns=$(echo $json | jq -r .moodleProfile.lbDns)
+    export waflbDns=$(echo $json | jq -r .moodleProfile.waflbDns)
+    export wafpasswd=$(echo $json | jq -r .moodleProfile.wafpasswd)
+}
 moodle_on_azure_configs_json_path=${1}
 
 . ./helper_functions.sh
@@ -37,6 +56,9 @@ echo $wafpasswd >> /tmp/vars.txt
 echo $waflbdns >> /tmp/vars.txt
 
 # Check for the WAF availability
+
+# Accept EULA
+curl -x POST "http://$waflbdns:8000/?name_sign=cudauser&email_sign=local@local.admin&action=save_signed_eula"
 
 # Login Token
 login_token = `curl -X POST "http://<WAF-IP/WAF-Domain>:8000/restapi/v3/login " \

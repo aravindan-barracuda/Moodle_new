@@ -100,7 +100,7 @@
               {
                 "properties": {
                   "protocol": "Tcp",
-                  "port": 80,
+                  "port": 443,
                   "intervalInSeconds": 5,
                   "numberOfProbes": 3
                 },

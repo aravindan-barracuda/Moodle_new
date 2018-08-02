@@ -1249,7 +1249,7 @@
                     "moodleCommon": {
                         "value": "[variables('moodleCommon')]"
                     },
-                    "subnetIdTika": {
+                    "subnetIdWaf": {
                         "value": "[reference('networkTemplate').outputs.subnetIdWaf.value]"
                     }
                 },
@@ -1371,6 +1371,7 @@
             "subnetWafPrefix": "[concat( variables('octets')[0], '.', variables('octets')[1], '.', string(add(int(variables('octets')[2]),7)))]",
             "subnetWafRange": "[concat( variables('octets')[0], '.', variables('octets')[1], '.', string(add(int(variables('octets')[2]),7)), '.0/24')]",
             "wafvmssName": "[concat('wafvmss-',variables('resourceprefix'))]",
+            "wafnsgName": "[concat('wafnsg-',variables('resourceprefix'))]",
             "wafvmssdStorageAccounttName": "[concat('wafvmss',uniqueString(resourceGroup().id))]",
             "wafextProbe": "[concat('waf-lb-probe-',variables('resourceprefix'))]",
 

@@ -10,7 +10,7 @@
         },
         "subnetIdWaf": {
             "metadata": {
-                "description": "Azure resource ID of the subnet where this Tika VM is to be deployed"
+                "description": "Azure resource ID of the subnet where this VM is to be deployed"
             },
             "type": "string"
         }
@@ -99,8 +99,7 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "[variables('wafscriptUri')]",
-                        "[parameters('moodleCommon').commonFunctionsScriptUri]"
+                        "[variables('wafscriptUri')]"
                     ]
                 },
                 "protectedSettings":{
@@ -119,8 +118,8 @@
         "documentation02": "It expects certain values in the 'common' datastructure.",
         "documentation03": "    vnetName               - name of the virtual network",
         "documentation06": "    WafRestClientNicName            - name of the WAF Client vm network interface",
-        "documentation11": "    WafclientVmName             - name of the tika vm",
-        "documentation12": "    WafclientVmIP               - IP of the tika vm",
+        "documentation11": "    WafclientVmName             - name of the waf client vm",
+        "documentation12": "    WafclientVmIP               - IP of the waf vm",
         "documentation16": "    wafclientconfig             - conditionally applies post-deployment script on the VM",
         "wafnicRef": "[resourceId('Microsoft.Network/networkInterfaces', parameters('moodleCommon').WafRestClientNicName)]",
         "wafcmdExec": "[concat('bash ', parameters('moodleCommon').wafScriptFilename, ' ', parameters('moodleCommon').wafclientVmIP)]",
