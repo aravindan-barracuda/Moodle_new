@@ -17,9 +17,13 @@ deployment.
 First we need to ensure our environment variables are correctly configured.
 
 ```
+Optional(Required if azure-credentials gem is used to auto-generate the SPN): 
 AZUREUSERNAME=<azure user account>
 AZUREPASSWD=<azure account password>
+
+Required:
 WAFPASSWD=<waf password> #for example @Testing123456
+MOODLE_RG_LOCATION=<location/region> #for example "eastus"
 ```
 
 ## Deployment Steps
@@ -32,7 +36,6 @@ The following snippet of bash commands will help to set up the environment varia
 {
     if [ -z "$MOODLE_RG_NAME" ]; then MOODLE_RG_NAME=moodle_$(date +%Y-%m-%d-%H); fi
     echo "----> Resource Group for deployment: $MOODLE_RG_NAME"
-    MOODLE_RG_LOCATION=eastus
     echo "----> Deployment location: $MOODLE_RG_LOCATION"
     MOODLE_DEPLOYMENT_NAME=MasterDeploy
     echo "----> Deployment name: $MOODLE_DEPLOYMENT_NAME"
@@ -60,11 +63,12 @@ The following snippet of bash commands will help to set up the environment varia
 ```
 2. Creating the Azure Service Principal credentials
 
-    Note: We use a gem called ```azure-credentials``` to create a the SPN credentials that will be used in the WAF for azure configuration. 
+    Follow the instructions in the article https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal for creating the Azure Service Principal.
+
+    Note: In the code snippet below a gem called ```azure-credentials``` to create a the SPN credentials that will be used in the WAF for azure configuration. 
 
 ```
 {
-    if hash jq 2>/dev/null; then echo "jq is already installed";else sudo apt-get install -y jq;fi
     if hash jq 2>/dev/null; then echo "jq is already installed";else sudo apt-get install -y jq;fi
     if hash azure-credentials 2>/dev/null;then echo "azure-credentials gem is already installed";else gem install azure-credentials;fi
     echo "fetching azure SPN credentials..."
