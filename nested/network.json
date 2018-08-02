@@ -304,7 +304,7 @@
         {   
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2017-10-01",
-            "name": "[parameters('moodleCommon').wafnsgName]",
+            "name": "parameters('moodleCommon').wafnsgName",
             "location": "[resourceGroup().location]",
             "tags": {
               "displayName": "NSG-WAF"

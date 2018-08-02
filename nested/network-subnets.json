@@ -108,7 +108,7 @@
             "properties": {
                 "addressPrefix": "[parameters('moodleCommon').subnetWafRange]",
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('moodleCommon').waflbSku,'NSG'))]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('moodleCommon').wafnsgName)]"
                   }
             }
         }
