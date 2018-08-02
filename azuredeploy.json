@@ -856,9 +856,6 @@
                 "parameters": {
                     "moodleCommon": {
                         "value": "[variables('moodleCommon')]"
-                    },
-                    "subnetIdWaf": {
-                        "value": "[reference('networkTemplate').outputs.subnetIdWaf.value]"
                     }
                 },
                 "templateLink": {
