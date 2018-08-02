@@ -1,6 +1,12 @@
 # Deploying Barracuda WAF in the Moodle setup
 
-The instructions will enable you to deploy the Barracuda WAF in a scale set along with the fully configurable moodle deployment
+The instructions will enable you to deploy the Barracuda WAF in a scale set along with the fully configurable moodle deployment. 
+
+## Important Note:
+
+The template is optimized for a deployment where the "httpsTermination" parameter is set to VMSS (this is the default setting in the template) for the Moodle stack.
+
+The template can be launched from the Azure management console or through the commandline on a linux machine.
 
 ## Fully configurable deployment with Barracuda WAF (Pay-As-You-Go License)
 
