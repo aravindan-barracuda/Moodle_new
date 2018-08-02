@@ -1539,7 +1539,7 @@
             "webServerType": "[parameters('webServerType')]",
             "WafRestClientNicName":"[concat('tika-vm-nic-',variables('resourceprefix'))]",
             "wafScriptFilename": "install_waf.sh",
-            "wafclientVmIP": "[if(equals(parameters('tikaService'), 'tika'), concat( variables('octets')[0], '.', variables('octets')[1], '.', string(add(int(variables('octets')[2]),7)), '.200'), 'none')]",
+            "wafclientVmIP": "[concat( variables('octets')[0], '.', variables('octets')[1], '.', string(add(int(variables('octets')[2]),7)), '.200')]",
             "wafclientVmName": "[concat('waf-client-vm-',variables('resourceprefix'))]",
             "wafclientVmSku": "[parameters('wafclientVmSku')]"
         },
