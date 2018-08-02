@@ -63,11 +63,11 @@ The following snippet of bash commands will help to set up the environment varia
     ls $MOODLE_AZURE_WORKSPACE/arm_template
 }
 ```
-2. Creating the Azure Service Principal credentials
+2. Creating Azure Service Principal credentials
 
-    Follow the instructions in the article [Azure SPN instructions](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for creating the Azure Service Principal.
+    Follow the instructions in the article [Azure SPN instructions](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for creating Azure Service Principal credentials.
 
-    Alternatively, in the code snippet below, a helper gem called ```azure-credentials``` is used to create a the SPN credentials that will be used in the WAF for azure configuration. This requires  ruby to be installed on the client machine on which the code is executed.
+    Alternatively, in the code snippet below, a helper gem called ```azure-credentials``` is used to create SPN credentials that will be used in the WAF to enable access to the WAF system to the Azure fabric. This is required in cases where a multi-ip/multi-NIC configuration is choosen for the deployment of the scaleset. This requires  ruby to be installed on the client machine on which the code is executed.
 
 ```
 {
