@@ -65,7 +65,7 @@ The following snippet of bash commands will help to set up the environment varia
 ```
 2. Creating the Azure Service Principal credentials
 
-    Follow the instructions in the article [Azure SPN instructions](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal)] for creating the Azure Service Principal.
+    Follow the instructions in the article [Azure SPN instructions](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for creating the Azure Service Principal.
 
     Alternatively, in the code snippet below, a helper gem called ```azure-credentials``` is used to create a the SPN credentials that will be used in the WAF for azure configuration. This requires  ruby to be installed on the client machine on which the code is executed.
 
