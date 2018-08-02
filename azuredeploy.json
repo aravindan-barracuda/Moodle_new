@@ -709,7 +709,7 @@
               "AZURE_USER_PASSWORD",
               "AZURE_SERVICE_PRINCIPAL"
             ],
-            "defaultValue": "AZURE_USER_PASSWORD",
+            "defaultValue": "AZURE_SERVICE_PRINCIPAL",
             "metadata": {
               "description": "Choose authentication method which WAF will use make API calls. If you choose AZURE_USER_PASSWORD provide values for (azureUserId and azureUserPassword). For AZURE_SERVICE_PRINCIPAL please provide details for (azureClientId, azureTenantId and azureTenantId)."
             }
@@ -1209,7 +1209,7 @@
                 "Microsoft.Resources/deployments/WAFTemplate",
                 "Microsoft.Resources/deployments/networkTemplate"
             ],
-            "name": "wafscaleSetTemplate",
+            "name": "CudaVMSSTemplate",
             "properties": {
                 "mode": "Incremental",
                 "parameters": {

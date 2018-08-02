@@ -419,6 +419,10 @@
         "subnetIdTika": {
             "value": "[variables('subnetIdTika')]",
             "type": "string"
+        },
+        "subnetIdWaf": {
+            "value": "[variables('subnetIdWaf')]",
+            "type": "string"
         }
     }
 }
