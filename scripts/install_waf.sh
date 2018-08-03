@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 set -ex
-sleep 300
+
 function get_setup_params_from_configs_json
 {
     local configs_json_path=${1}    # E.g., /var/lib/cloud/instance/moodle_on_azure_configs.json
@@ -45,8 +45,6 @@ function get_setup_params_from_configs_json
     export wafpasswd=$(echo $json | jq -r .moodleProfile.wafpasswd)
 }
 moodle_on_azure_configs_json_path=${1}
-
-. ./helper_functions.sh
 
 get_setup_params_from_configs_json $moodle_on_azure_configs_json_path || exit 99
 

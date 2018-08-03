@@ -9,6 +9,7 @@
                 "CudaWafDeploySwitch":         { "value": true},
                 "wafazureClientId":            {"value":"CLIENT-ID"},
                 "wafazureTenantId":            {"value":"TENANT-ID"},
-                "wafazureSecretKey":           {"value":"CLIENT-SECRET"}
+                "wafazureSecretKey":           {"value":"CLIENT-SECRET"},
+                "wafapplyScriptsSwitch":       {"value": true}
         }
 }
