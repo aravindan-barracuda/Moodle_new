@@ -644,7 +644,7 @@
             }
         },
         "wafUsername": {
-            "defaultValue": "admin",
+            "defaultValue": "administrator1",
             "metadata": {
                 "description": "waf user name"
             },
