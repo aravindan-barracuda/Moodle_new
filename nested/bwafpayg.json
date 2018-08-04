@@ -107,7 +107,7 @@
             },
             "osProfile": {
               "computerNamePrefix": "[parameters('moodleCommon').wafvmssName]",
-              "adminUsername": "[parameters('moodleCommon').wafUsername]",
+              "adminUsername": "will-be-replaced-by-admin",
               "adminPassword": "[parameters('moodleCommon').wafpasswd]",
               "customData": "[base64(variables('wafcustomData'))]"
             },
