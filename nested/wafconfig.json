@@ -35,12 +35,12 @@
         }
     ],
     "variables": {
-        "wafcmdExec": "[concat('bash ', parameters('moodleCommon').tikaScriptFilename, ' ', parameters('moodleCommon').tikaVmIP)]",
-        "documentation01": "This sub-template applies a specific post-deployment script to the tika vm",
+        "wafcmdExec": "[concat('bash ', parameters('moodleCommon').wafScriptFilename, ' ', parameters('moodleCommon').wafclientVmIP)]",
+        "documentation01": "This sub-template applies a specific post-deployment script to the waf vm",
         "documentation02": "It expects certain values in the 'common' datastructure.",
         "documentation03": "    scriptLocation              - web URI",
-        "documentation04": "    tikaScriptFilename          - name of script file",
-        "documentation05": "    tikaVmName                  - name of the tika search vm generic name",
-        "wafscriptUri": "[concat(parameters('moodleCommon').scriptLocation,parameters('moodleCommon').tikaScriptFilename,parameters('moodleCommon').artifactsSasToken)]"
+        "documentation04": "    wafScriptFilename          - name of script file",
+        "documentation05": "    wafclientVmName                  - name of the waf search vm generic name",
+        "wafscriptUri": "[concat(parameters('moodleCommon').scriptLocation,parameters('moodleCommon').wafScriptFilename,parameters('moodleCommon').artifactsSasToken)]"
     }
 }
