@@ -60,9 +60,6 @@ function get_setup_params_from_configs_json
     export nfsHaLbIP=$(echo $json | jq -r .fileServerProfile.nfsHaLbIP)
     export nfsHaExportPath=$(echo $json | jq -r .fileServerProfile.nfsHaExportPath)
     export nfsByoIpExportPath=$(echo $json | jq -r .fileServerProfile.nfsByoIpExportPath)
-    export lbDns=$(echo $json | jq -r .moodleProfile.lbDns)
-    export waflbDns=$(echo $json | jq -r .moodleProfile.waflbDns)
-    export wafpasswd=$(echo $json | jq -r .moodleProfile.wafpasswd)
 }
 
 function get_php_version {

@@ -644,7 +644,7 @@
             }
         },
         "wafUsername": {
-            "defaultValue": "administrator1",
+            "defaultValue": "admin",
             "metadata": {
                 "description": "waf user name"
             },
@@ -653,7 +653,7 @@
         "wafpasswd": {
             "defaultValue": "WAF-PASSWORD",
             "metadata": {
-                "description": "waf user name"
+                "description": "waf login password"
             },
             "type": "securestring"
         },
@@ -844,7 +844,46 @@
                 "description": "Switch to process or bypass all scripts/extensions"
             },
             "type": "bool"
-        }
+        },
+        "wafdefaultDomainName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+              "description": "Domain Name"
+            }
+          },
+          "wafeulaUserName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+              "description": "Name of the user accepting EULA."
+            }
+          },
+          "wafeulaUserEmail": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+              "description": "Email ID of the user accepting the EULA."
+            }
+          },
+          "wafeulaUserCompany": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+              "description": "Compnay Name of the user accepting EULA."
+            }
+          },
+          "wafbillingMethod": {
+            "type": "string",
+            "allowedValues": [
+              "byol",
+              "hourly"
+            ],
+            "defaultValue": "hourly",
+            "metadata": {
+              "description": "Type of Deployment"
+            }
+          }
     },
     "resources": [
         {
@@ -1363,11 +1402,11 @@
             "wafosType": {
                 "publisher": "barracudanetworks",
                 "offer": "waf",
-                "sku": "hourly",
+                "sku": "[variables('wafimageSKU')]",
                 "version": "latest"
               },
             "wafimagePlan": {
-                "name": "hourly",
+                "name": "[variables('wafimageSKU')]",
                 "product": "waf",
                 "publisher": "barracudanetworks"
               },
@@ -1381,6 +1420,7 @@
             "wafvmssdStorageAccounttName": "[concat('wafvmss',uniqueString(resourceGroup().id))]",
             "wafextProbe": "[concat('waf-lb-probe-',variables('resourceprefix'))]",
             "wafapplyScriptsSwitch": "[parameters('wafapplyScriptsSwitch')]",
+            
 
             "baseTemplateUrl": "[concat(parameters('_artifactsLocation'), 'nested/')]",
             "scriptLocation": "[concat(parameters('_artifactsLocation'), 'scripts/')]",
@@ -1566,6 +1606,7 @@
             }
         ],
         "octets": "[split(parameters('vNetAddressSpace'), '.')]",
+        "wafimageSKU": "[parameters('wafbillingMethod')]",
         "resourceprefix": "[substring(uniqueString(resourceGroup().id, deployment().name), 3, 6)]",
         "subnetSanPrefix": "[concat( variables('octets')[0], '.', variables('octets')[1], '.', string(add(int(variables('octets')[2]),2)))]",
         "subnetWebRange": "[concat( variables('octets')[0], '.', variables('octets')[1], '.', string(add(int(variables('octets')[2]),0)), '.0/24')]"

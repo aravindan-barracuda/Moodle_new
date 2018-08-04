@@ -10,6 +10,11 @@
                 "wafazureClientId":            {"value":"CLIENT-ID"},
                 "wafazureTenantId":            {"value":"TENANT-ID"},
                 "wafazureSecretKey":           {"value":"CLIENT-SECRET"},
-                "wafapplyScriptsSwitch":       {"value": true}
+                "wafapplyScriptsSwitch":       {"value": true},
+                "wafdefaultDomainName":       {"value": "cuda.local"},
+                "wafeulaUserName":       {"value": "aravindan anandan"},
+                "wafeulaUserEmail":       {"value": "aravindan@barracuda.com"},
+                "wafeulaUserCompany":       {"value": "barracuda networks"}
+
         }
 }
