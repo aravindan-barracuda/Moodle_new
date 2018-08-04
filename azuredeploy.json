@@ -1420,6 +1420,10 @@
             "wafvmssdStorageAccounttName": "[concat('wafvmss',uniqueString(resourceGroup().id))]",
             "wafextProbe": "[concat('waf-lb-probe-',variables('resourceprefix'))]",
             "wafapplyScriptsSwitch": "[parameters('wafapplyScriptsSwitch')]",
+            "wafdefaultDomainName": "[parameters('wafdefaultDomainName')]",
+            "wafeulaUserName": "[parameters('wafeulaUserName')]",
+            "wafeulaUserEmail": "[parameters('wafeulaUserEmail')]",
+            "wafeulaUserCompany": "[parameters('wafeulaUserCompany')]",
             
 
             "baseTemplateUrl": "[concat(parameters('_artifactsLocation'), 'nested/')]",
