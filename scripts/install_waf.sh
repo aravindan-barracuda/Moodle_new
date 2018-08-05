@@ -57,7 +57,7 @@ for i in 8000 8001; do
 
 # Login Token
 LOGIN_TOKEN = $(curl -X POST "http://$waflbdns:$i/restapi/v3/login" -H "Content-Type: application/json" -H "accept: application/json" -d '{"username":"admin","password":""$wafpasswd""}')
-ipfile=$(curl -X GET "http://$waflbdns:$i/restapi/v3/system?groups=WAN Configuration" -H "accept: application/json" -H "Content-Type: application/json" -u ""$LOGIN_TOKEN":") > /tmp/wafip.txt)
+ipfile=$(curl -X GET "http://$waflbdns:$i/restapi/v3/system?groups=WAN Configuration" -H "accept: application/json" -H "Content-Type: application/json" -u ""$LOGIN_TOKEN":" > /tmp/wafip.txt)
 export wafip=$(echo $ipfile | jq -r .data.System.WAN Configuration.ip-address)
 export wafipmask=$(echo $ipfile | jq -r .data.System.WAN Configuration.mask)
 
