@@ -13,6 +13,12 @@
                 "description": "Azure resource ID of the subnet where this VM is to be deployed"
             },
             "type": "string"
+        },
+        "vmSetupParamsObj": {
+            "metadata": {
+                "description": "JSON-structured VM setup params that'll be injected to the VM (through cloud-init) and used by the custom script (setup_webserver.sh)"
+            },
+            "type": "object"
         }
     },
     "resources": [
@@ -61,6 +67,7 @@
                 "osProfile": {
                     "adminUsername": "[parameters('moodleCommon').sshUsername]",
                     "computerName": "[parameters('moodleCommon').wafclientVmName]",
+                    "customData": "[base64(concat('#cloud-config\nwrite_files:\n- encoding: b64\n  content: ', base64(string(parameters('vmSetupParamsObj'))), '\n  owner: root:root\n  path: ', parameters('moodleCommon').moodleOnAzureConfigsJsonPath, '\n  permissions: ', variables('singleQuote'), '0400', variables('singleQuote')))]",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": true,
                         "ssh": {
@@ -120,6 +127,7 @@
         "documentation11": "    WafclientVmName             - name of the waf client vm",
         "documentation12": "    WafclientVmIP               - IP of the waf vm",
         "documentation16": "    wafclientconfig             - conditionally applies post-deployment script on the VM",
+        "singleQuote": "'",
         "wafnicRef": "[resourceId('Microsoft.Network/networkInterfaces', parameters('moodleCommon').WafRestClientNicName)]",
         "wafcmdExec": "[concat('bash ', parameters('moodleCommon').wafScriptFilename, ' ', parameters('moodleCommon').wafclientVmIP)]",
         "wafscriptUri": "[concat(parameters('moodleCommon').scriptLocation,parameters('moodleCommon').wafScriptFilename,parameters('moodleCommon').artifactsSasToken)]"

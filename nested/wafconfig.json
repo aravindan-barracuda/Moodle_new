@@ -35,7 +35,7 @@
         }
     ],
     "variables": {
-        "wafcmdExec": "[concat('bash ', parameters('moodleCommon').wafScriptFilename, ' ', parameters('moodleCommon').wafclientVmIP)]",
+        "wafcmdExec": "[concat('bash ', parameters('moodleCommon').wafScriptFilename, ' ', parameters('moodleCommon').moodleOnAzureConfigsJsonPath)]",
         "documentation01": "This sub-template applies a specific post-deployment script to the waf vm",
         "documentation02": "It expects certain values in the 'common' datastructure.",
         "documentation03": "    scriptLocation              - web URI",

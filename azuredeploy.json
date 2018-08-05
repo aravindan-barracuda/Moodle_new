@@ -1155,6 +1155,7 @@
                 "Microsoft.Resources/deployments/dbTemplate",
                 "Microsoft.Resources/deployments/redisTemplate",
                 "Microsoft.Resources/deployments/searchTemplate",
+                "Microsoft.Resources/deployments/WAFTemplate",
                 "Microsoft.Resources/deployments/storageAccountTemplate"
             ],
             "name": "vmSetupParamsTemplate",

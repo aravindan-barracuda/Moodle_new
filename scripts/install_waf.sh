@@ -22,7 +22,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-echo $siteFQDN >> /tmp/vars.txt
+# Common functions definitions
+
+function get_setup_params_from_configs_json
+{
+    local configs_json_path=${1}    # E.g., /var/lib/cloud/instance/moodle_on_azure_configs.json
+
+    (dpkg -l jq &> /dev/null) || (apt -y update; apt -y install jq)
+
+    # Wait for the cloud-init write-files user data file to be generated (just in case)
+    local wait_time_sec=0
+    while [ ! -f "$configs_json_path" ]; do
+        sleep 15
+        let "wait_time_sec += 15"
+        if [ "$wait_time_sec" -ge "1800" ]; then
+            echo "Error: Cloud-init write-files didn't complete in 30 minutes!"
+            return 1
+        fi
+    done
+
+    local json=$(cat $configs_json_path)
+
+    export lbdns=$(echo $json | jq -r .wafProfile.lbdns)
+    export wafpasswd=$(echo $json | jq -r .wafProfile.wafpasswd)
+    export waflbdns=$(echo $json | jq -r .wafProfile.waflbdns)
+    
+}
 echo $lbdns >> /tmp/vars.txt
 echo $wafpasswd >> /tmp/vars.txt
 echo $waflbdns >> /tmp/vars.txt
