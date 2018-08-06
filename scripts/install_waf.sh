@@ -41,7 +41,7 @@ echo $waflbdns >> /tmp/vars.txt
 # Check for the WAF availability [to be added]
 for i in 8000 8001 8002;
 do
-status_code=$(curl -I "http://$waflbdns:$i/"|grep "200">/tmp/status-$i)
+status_code=$(curl -Is "http://$waflbdns:$i/"|grep "200">/tmp/status-$i)
 done
 export port1=$(cat /tmp/status-8000)
 export port2=$(cat /tmp/status-8001)
