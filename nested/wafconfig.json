@@ -20,6 +20,7 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
+                        "[parameters('moodleCommon').commonFunctionsScriptUri]",
                         "[variables('wafscriptUri')]"
                     ]
                 },
