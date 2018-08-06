@@ -48,6 +48,7 @@ function get_setup_params_from_configs_json
     export waflbdns=$(echo $json | jq -r .wafProfile.waflbdns)
     
 }
+get_setup_params_from_configs_json $moodle_on_azure_configs_json_path || exit 99
 echo $lbdns >> /tmp/vars.txt
 echo $wafpasswd >> /tmp/vars.txt
 echo $waflbdns >> /tmp/vars.txt
@@ -78,7 +79,7 @@ curl -X POST "http://$waflbdns:$i/restapi/v3/services/moodle_service/servers" -H
 curl -X PUT "http://$waflbdns:$i/restapi/v3/services/moodle_service/servers/moodle_server/ssl-policy" -H "accept: application/json" -u ""$LOGIN_TOKEN":" -H "Content-Type: application/json" -d '{ "enable-ssl-compatibility-mode": "No", "enable-https": "Yes", "enable-tls-1": "No", "enable-tls-1-2": "Yes", "enable-ssl-3": "No", "enable-sni": "No", "validate-certificate": "No", "enable-tls-1-1": "Yes", "client-certificate": ""}'
 
 
-done } > /tmp/setup.log
+done 
 OUTPUT = $(curl -X GET "http://$waflbdns:$i/restapi/v3/services?category=operational" -u ""$LOGIN_TOKEN":" )
-echo "$OUTPUT"
+echo "$OUTPUT" } > /tmp/setup.log
 
