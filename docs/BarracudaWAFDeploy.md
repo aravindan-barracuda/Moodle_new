@@ -38,7 +38,7 @@ MOODLE_RG_LOCATION=<location/region> #for example "eastus"
 
 The following snippet of bash commands will help to set up the environment variables to the point where you      can execute ```az group deployment create```
 
-1. Moodle specific variables
+1. Environment variables
 
 ```
 {
