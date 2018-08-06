@@ -46,6 +46,7 @@ function get_setup_params_from_configs_json
     export lbdns=$(echo $json | jq -r .wafProfile.lbdns)
     export wafpasswd=$(echo $json | jq -r .wafProfile.wafpasswd)
     export waflbdns=$(echo $json | jq -r .wafProfile.waflbdns)
+    export siteFQDN=$(echo $json | jq -r .siteProfile.siteURL)
     
 }
 get_setup_params_from_configs_json $moodle_on_azure_configs_json_path || exit 99
@@ -54,32 +55,35 @@ echo $wafpasswd >> /tmp/vars.txt
 echo $waflbdns >> /tmp/vars.txt
 {
 # Check for the WAF availability
+
 for i in 8000 8001; do
+(curl -I http://$waflbdns:$i/|grep "200")>/tmp/status-$i
 
 # Login Token
-LOGIN_TOKEN = $(curl -X POST "http://$waflbdns:$i/restapi/v3/login" -H "Content-Type: application/json" -H "accept: application/json" -d '{"username":"admin","password":""$wafpasswd""}')
-ipfile=$(curl -X GET "http://$waflbdns:$i/restapi/v3/system?groups=WAN Configuration" -H "accept: application/json" -H "Content-Type: application/json" -u ""$LOGIN_TOKEN":" > /tmp/wafip.txt)
-export wafip=$(echo $ipfile | jq -r .data.System.WAN Configuration.ip-address)
-export wafipmask=$(echo $ipfile | jq -r .data.System.WAN Configuration.mask)
+export LOGIN_TOKEN=$(curl -X POST "http://$waflbdns:$i/restapi/v3/login" -H "Content-Type: application/json" -H "accept: application/json" -d '{"username":"admin","password":"'$wafpasswd'"}'| jq -r .token)
+curl -X GET "http://$waflbdns:$i/restapi/v3/system?groups=WAN Configuration" -H "accept: application/json" -H "Content-Type: application/json" -u "'$LOGIN_TOKEN':" > /tmp/wafip.txt
+export ipfile=$(cat /tmp/wafip.txt)
+export wafip=$(echo $ipfile | jq -r '.data.System."WAN Configuration"."ip-address"')
+export wafip=$(echo $ipfile | jq -r '.data.System."WAN Configuration".mask')
 
 # Creating the certificate
 
-curl -X POST "http://$waflbdns:$i/restapi/v3/certificates" -H "accept: application/json" -u ""$LOGIN_TOKEN":" -H "Content-Type: application/json" -d '{ "allow_private_key_export": "Yes", "city": "San Franscisco", "common_name": ""$siteFQDN"", "country_code": "US", "curve_type": "secp256r1", "key_size": "2048", "key_type": "rsa", "name": "moodle_cert", "organization_name": "Moodle", "organization_unit": "MoodleTeam", "state": "CA"}'
+curl -X POST "http://$waflbdns:$i/restapi/v3/certificates" -H "accept: application/json" -u "'$LOGIN_TOKEN':" -H "Content-Type: application/json" -d '{ "allow_private_key_export": "Yes", "city": "San Franscisco", "common_name": ""$siteFQDN"", "country_code": "US", "curve_type": "secp256r1", "key_size": "2048", "key_type": "rsa", "name": "moodle_cert", "organization_name": "Moodle", "organization_unit": "MoodleTeam", "state": "CA"}'
 
 # Creating the service
 
-curl -X POST "http://$waflbdns:$i/restapi/v3/services" -H "accept: application/json" -u ""$LOGIN_TOKEN":" -H "Content-Type: application/json" -d '{ "address-version": "IPv4", "app-id": "moodle", "certificate": "moodle_cert", "group": "default", "ip-address": ""$wafip"", "mask": ""$wafipmask"", "name": "moodle_service", "port": 443, "status": "On", "type": "HTTPS", "vsite": "default"}'
+curl -X POST "http://$waflbdns:$i/restapi/v3/services" -H "accept: application/json" -u "'$LOGIN_TOKEN':" -H "Content-Type: application/json" -d '{ "address-version": "IPv4", "app-id": "moodle", "certificate": "moodle_cert", "group": "default", "ip-address": "'$wafip'", "mask": "'$wafipmask'", "name": "moodle_service", "port": 443, "status": "On", "type": "HTTPS", "vsite": "default"}'
 
 # Creating the server
 
-curl -X POST "http://$waflbdns:$i/restapi/v3/services/moodle_service/servers" -H "accept: application/json" -u ""$LOGIN_TOKEN":" -H "Content-Type: application/json" -d '{ "hostname": ""$lbdns"", "status": "In Service", "identifier": "Hostname", "address-version": "IPv4", "name": "moodle_server", "port": 443}'
+curl -X POST "http://$waflbdns:$i/restapi/v3/services/moodle_service/servers" -H "accept: application/json" -u "'$LOGIN_TOKEN':" -H "Content-Type: application/json" -d '{ "hostname": "'$lbdns'", "status": "In Service", "identifier": "Hostname", "address-version": "IPv4", "name": "moodle_server", "port": 443}'
 
 # Enabling SSL on the server
 
-curl -X PUT "http://$waflbdns:$i/restapi/v3/services/moodle_service/servers/moodle_server/ssl-policy" -H "accept: application/json" -u ""$LOGIN_TOKEN":" -H "Content-Type: application/json" -d '{ "enable-ssl-compatibility-mode": "No", "enable-https": "Yes", "enable-tls-1": "No", "enable-tls-1-2": "Yes", "enable-ssl-3": "No", "enable-sni": "No", "validate-certificate": "No", "enable-tls-1-1": "Yes", "client-certificate": ""}'
+curl -X PUT "http://$waflbdns:$i/restapi/v3/services/moodle_service/servers/moodle_server/ssl-policy" -H "accept: application/json" -u "'$LOGIN_TOKEN':" -H "Content-Type: application/json" -d '{ "enable-ssl-compatibility-mode": "No", "enable-https": "Yes", "enable-tls-1": "No", "enable-tls-1-2": "Yes", "enable-ssl-3": "No", "enable-sni": "No", "validate-certificate": "No", "enable-tls-1-1": "Yes", "client-certificate": ""}'
 
-
-done 
-OUTPUT = $(curl -X GET "http://$waflbdns:$i/restapi/v3/services?category=operational" -u ""$LOGIN_TOKEN":" )
+ 
+OUTPUT = $(curl -X GET "http://$waflbdns:$i/restapi/v3/services?category=operational" -u "'$LOGIN_TOKEN':" )
 echo "$OUTPUT" } > /tmp/setup.log
+done
 
