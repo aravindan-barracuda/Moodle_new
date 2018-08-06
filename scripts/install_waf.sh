@@ -24,40 +24,24 @@
 
 # Common functions definitions
 
-function get_setup_params_from_configs_json
+set -ex
+
+#parameters 
 {
-    local configs_json_path=${1}    # E.g., /var/lib/cloud/instance/moodle_on_azure_configs.json
+    moodle_on_azure_configs_json_path=${1}
 
-    (dpkg -l jq &> /dev/null) || (apt -y update; apt -y install jq)
+    . ./helper_functions.sh
 
-    # Wait for the cloud-init write-files user data file to be generated (just in case)
-    local wait_time_sec=0
-    while [ ! -f "$configs_json_path" ]; do
-        sleep 15
-        let "wait_time_sec += 15"
-        if [ "$wait_time_sec" -ge "1800" ]; then
-            echo "Error: Cloud-init write-files didn't complete in 30 minutes!"
-            return 1
-        fi
-    done
-
-    local json=$(cat $configs_json_path)
-
-    export lbdns=$(echo $json | jq -r .wafProfile.lbdns)
-    export wafpasswd=$(echo $json | jq -r .wafProfile.wafpasswd)
-    export waflbdns=$(echo $json | jq -r .wafProfile.waflbdns)
-    export siteFQDN=$(echo $json | jq -r .siteProfile.siteURL)
-    
-}
 get_setup_params_from_configs_json $moodle_on_azure_configs_json_path || exit 99
+
 echo $lbdns >> /tmp/vars.txt
 echo $wafpasswd >> /tmp/vars.txt
 echo $waflbdns >> /tmp/vars.txt
-{
-# Check for the WAF availability
+
+# Check for the WAF availability [to be added]
 
 for i in 8000 8001; do
-(curl -I http://$waflbdns:$i/|grep "200")>/tmp/status-$i
+#(curl -I http://$waflbdns:$i/|grep "200")>/tmp/status-$i
 
 # Login Token
 export LOGIN_TOKEN=$(curl -X POST "http://$waflbdns:$i/restapi/v3/login" -H "Content-Type: application/json" -H "accept: application/json" -d '{"username":"admin","password":"'$wafpasswd'"}'| jq -r .token)
@@ -84,6 +68,7 @@ curl -X PUT "http://$waflbdns:$i/restapi/v3/services/moodle_service/servers/mood
 
  
 OUTPUT = $(curl -X GET "http://$waflbdns:$i/restapi/v3/services?category=operational" -u "'$LOGIN_TOKEN':" )
-echo "$OUTPUT" } > /tmp/setup.log
+echo "$OUTPUT" 
 done
+} > /tmp/setup.log
 
