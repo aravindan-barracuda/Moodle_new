@@ -23,8 +23,7 @@
 # SOFTWARE.
 
 # Common functions definitions
-
-set -ex
+set -x
 port=8000
 status=0
 RESPONSE=/tmp/response.txt
@@ -42,7 +41,7 @@ echo $waflbdns >> /tmp/vars.txt
 
 # Check for the WAF availability [to be added]
 echo "starting with $port.."
-while [ $port -le 8003 ]
+while [ $port -le 8002 ]
 do
 status=$(curl -s -w %{http_code} http://$waflbdns:$port/ -o $RESPONSE)
 
