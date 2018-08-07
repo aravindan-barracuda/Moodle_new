@@ -25,7 +25,9 @@
 # Common functions definitions
 
 set -ex
-
+port=8000
+status=0
+RESPONSE=/tmp/response.txt
 # Parameters 
 {
     moodle_on_azure_configs_json_path=${1}
@@ -39,36 +41,23 @@ echo $wafpasswd >> /tmp/vars.txt
 echo $waflbdns >> /tmp/vars.txt
 
 # Check for the WAF availability [to be added]
-for i in 8000 8001 8002;
+echo "starting with $port.."
+while [ $port -le 8003 ]
 do
-curl -Is "http://$waflbdns:$i/"|grep "200">/tmp/status-$i
+status=$(curl -s -w %{http_code} http://$waflbdns:$port/ -o $RESPONSE)
+
+if [ $status = 200 ]
+then
+echo "connecting successfully.."
+break
+else
+echo "not working. setting the next port number.."
+port=$(( $port + 1 ))
+echo "port is set to $port.."
+fi
 done
-export port1=$(cat /tmp/status-8000)
-export port2=$(cat /tmp/status-8001)
-export port3=$(cat /tmp/status-8002)
+echo "new connections will use port number $port..."
 
-# Code to be added: if status-$i has 200 OK, then assign $i to $port
-if [[ "$port1" =~ "HTTP/1.1 200 OK" ]]; then
-	echo "setting the port as 8000"
-    export port=8000
-	echo "$port"
-else
-    echo "not doing anything with 8000"
-
-if  [[ "$port1" =~ "HTTP/1.1 200 OK" ]]; then
- 	echo "setting the port as 8001"
-    export port=8001
-else
-    echo "not doing anything with 8001"
-
-if [[ "$port2" =~ "HTTP/1.1 200 OK" ]]; then
-    echo "setting the port as 8002"
-	export port=8002
-else
-    echo "not doing anything with 8002"
-            fi
-        fi
-    fi
 
 # Login Token
 export LOGIN_TOKEN=$(curl -X POST "http://$waflbdns:$port/restapi/v3/login" -H "Content-Type: application/json" -H "accept: application/json" -d '{"username":"admin","password":"'$wafpasswd'"}'| jq -r .token)
