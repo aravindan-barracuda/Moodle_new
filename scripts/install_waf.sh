@@ -59,11 +59,13 @@ echo "new connections will use port number $port..."
 
 
 # Login Token
+
 export LOGIN_TOKEN=$(curl -X POST "http://$waflbdns:$port/restapi/v3/login" -H "Content-Type: application/json" -H "accept: application/json" -d '{"username":"admin","password":"'$wafpasswd'"}'| jq -r .token)
-curl -X GET "http://$waflbdns:$port/restapi/v3/system?groups=WAN Configuration" -H "accept: application/json" -H "Content-Type: application/json" -u "'$LOGIN_TOKEN':" > /tmp/wafip.txt
-export ipfile=$(cat /tmp/wafip.txt)
-export wafip=$(echo $ipfile | jq -r '.data.System."WAN Configuration"."ip-address"')
-export wafip=$(echo $ipfile | jq -r '.data.System."WAN Configuration".mask')
+#Getting the system IP
+#curl -X GET "http://$waflbdns:$port/restapi/v3/system?groups=WAN Configuration" -H "accept: application/json" -H "Content-Type: application/json" -u "'$LOGIN_TOKEN':" > /tmp/wafip.txt
+#export ipfile=$(cat /tmp/wafip.txt)
+#export wafip=$(echo $ipfile | jq -r '.data.System."WAN Configuration"."ip-address"')
+#export wafipmask=$(echo $ipfile | jq -r '.data.System."WAN Configuration".mask')
 
 # Creating the certificate
 
@@ -71,7 +73,7 @@ curl -X POST "http://$waflbdns:$port/restapi/v3/certificates" -H "accept: applic
 
 # Creating the service
 
-curl -X POST "http://$waflbdns:$port/restapi/v3/services" -H "accept: application/json" -u "'$LOGIN_TOKEN':" -H "Content-Type: application/json" -d '{ "address-version": "IPv4", "app-id": "moodle", "certificate": "moodle_cert", "group": "default", "ip-address": "'$wafip'", "mask": "'$wafipmask'", "name": "moodle_service", "port": 443, "status": "On", "type": "HTTPS", "vsite": "default"}'
+curl -X POST "http://$waflbdns:$port/restapi/v3/services" -H "accept: application/json" -u "'$LOGIN_TOKEN':" -H "Content-Type: application/json" -d '{ "address-version": "IPv4", "app-id": "moodle", "certificate": "moodle_cert", "group": "default", "azure-ip-select":"System IP Address", "name": "moodle_service", "port": 443, "status": "On", "type": "HTTPS", "vsite": "default"}'
 
 # Creating the server
 
