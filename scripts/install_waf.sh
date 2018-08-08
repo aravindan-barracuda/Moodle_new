@@ -38,6 +38,8 @@ get_setup_params_from_configs_json $moodle_on_azure_configs_json_path || exit 99
 echo $lbdns >> /tmp/vars.txt
 echo $wafpasswd >> /tmp/vars.txt
 echo $waflbdns >> /tmp/vars.txt
+echo "The WAF Load Balancer is $waflbdns"
+echo "The App's Load Balancer is $lbdns"
 
 # Check for the WAF availability [to be added]
 echo "starting with $port.."
@@ -59,13 +61,18 @@ echo "new connections will use port number $port..."
 
 
 # Login Token
-
-export LOGIN_TOKEN=$(curl -X POST "http://$waflbdns:$port/restapi/v3/login" -H "Content-Type: application/json" -H "accept: application/json" -d '{"username":"admin","password":"'$wafpasswd'"}'| jq -r .token)
+echo "Getting the login token.."
+curl -X POST "http://$waflbdns:$port/restapi/v3/login" -H "Content-Type: application/json" -H "accept: application/json" -d '{"username":"admin","password":"'$wafpasswd'"}' > /tmp/logintoken.txt
+export LOGIN_TOKEN=$(cat /tmp/logintoken.txt | jq -r '.token')
+echo "Token is $LOGIN_TOKEN"
 #Getting the system IP
 #curl -X GET "http://$waflbdns:$port/restapi/v3/system?groups=WAN Configuration" -H "accept: application/json" -H "Content-Type: application/json" -u "'$LOGIN_TOKEN':" > /tmp/wafip.txt
 #export ipfile=$(cat /tmp/wafip.txt)
 #export wafip=$(echo $ipfile | jq -r '.data.System."WAN Configuration"."ip-address"')
 #export wafipmask=$(echo $ipfile | jq -r '.data.System."WAN Configuration".mask')
+
+echo "******************************************************"
+echo "******************************************************"
 
 # Creating the certificate
 
