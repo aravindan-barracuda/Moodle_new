@@ -80,7 +80,7 @@ curl -X POST "http://$waflbdns:$port/restapi/v3/certificates" -H "accept: applic
 
 # Creating the service
 
-curl -X POST "http://$waflbdns:$port/restapi/v3/services" -H "accept: application/json" -u "'$LOGIN_TOKEN':" -H "Content-Type: application/json" -d '{ "address-version": "IPv4", "app-id": "moodle", "certificate": "moodle_cert", "group": "default", "azure-ip-select":"System IP Address", "name": "moodle_service", "port": 443, "status": "On", "type": "HTTPS", "vsite": "default"}'
+curl -X POST "http://$waflbdns:$port/restapi/v3/services" -H "accept: application/json" -u "'$LOGIN_TOKEN':" -H "Content-Type: application/json" -d '{ "app-id": "moodle", "certificate": "moodle_cert", "group": "default", "azure-ip-select":"System IP Address", "name": "moodle_service", "port": 443, "status": "On", "type": "HTTPS", "vsite": "default"}'
 
 # Creating the server
 
